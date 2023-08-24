@@ -1,0 +1,32 @@
+{
+  "name": "ecomerce",
+  "version": "1.0.0",
+  "description": "Ecommerce web API",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EAZYLINK/NODEJS_MENTORSHIP_CLASS.git"
+  },
+  "author": "EAZYLINK",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/EAZYLINK/NODEJS_MENTORSHIP_CLASS/issues"
+  },
+  "homepage": "https://github.com/EAZYLINK/NODEJS_MENTORSHIP_CLASS#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.1",
+    "mongoose": "^7.4.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
