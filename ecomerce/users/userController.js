@@ -1,5 +1,5 @@
 import { createAccountService, usernameExist } from "./userServices.js";
-import APIError from '../middleware/errorHandler.js'
+import APIError from '../middleware/apiError.js'
 
 export const createAccount = async(req, res, next) =>{
     try {
