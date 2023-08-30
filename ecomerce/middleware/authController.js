@@ -1,5 +1,5 @@
-import { loginService, validatePassword, isLoggedInService } from "./authServices.js"
-import { usernameExist, getUserByUsername} from "../users/userServices.js"
+import { loginService, validatePassword, isLoggedInService, isAdminService, isBuyerService, isSellerService } from "./authServices.js"
+import { usernameExist, getUserByUsername, getUserByIdService, getAllUsersService, deleteUserService, updateUserService} from "../users/userServices.js"
 import APIError from './apiError.js'
 
 export const login = async(req, res, next) => {
@@ -33,8 +33,64 @@ export const isLoggedIn = async(req, res, next) => {
     if (!loggedInUser) {
         return next(APIError.unAuthorized("You need to login first!"))
     }
-
     req.username = loggedInUser.username
     req.role = loggedInUser.role
-    res.status(200).json("User already logged in")
+    next()
+}
+
+export const isAdmin = async(req, res, next) => {
+    const role = req.role
+    const isAdmin = await isAdminService(role)
+    if (!isAdmin) {
+        return next(APIError.unAuthorized("Only admin can acces this route!"))
+    }
+    next()
+}
+
+export const isSeller = async(req, res, next) => {
+    const role = req.role
+    const isSeller = await isSellerService(role)
+    const isAdmin = await isAdminService(role)
+    if (!isSeller && !isAdmin) {
+        return next(APIError.unAuthorized("Only sellers can acces this route!"))
+    }
+    next()
+}
+
+export const isBuyer = async(req, res, next) => {
+    const role = req.role
+    const isBuyer = await isBuyerService(role)
+    const isAdmin = await isAdminService(role)
+    if (!isBuyer && !isAdmin) {
+        return next(APIError.unAuthorized("Only buyers can acces this route!"))
+    }
+    next()
+}
+
+export const getUserById = async(req, res, next) => {
+    const {id} = req.param
+    if (!id) {
+        return next(APIError.invalidrequest("please supply the user ID as param"))
+    }
+    const user = await getUserByIdService(id)
+    if (!user) {
+        return next(APIError.notFound(`user with id ${id} not found`))
+    }
+    res.status(200).json({
+        success: true,
+        message: "user retrieved successfully",
+        user: user
+    })
+}
+
+export const getAllUser = async(req, res, next) => {
+    const users = await getAllUsersService()
+    if (!users) {
+        return next(APIError.customeError())
+    }
+    res.status(200).json({
+        success: true,
+        message: "User accounts retrieved successfully",
+        users: users
+    })
 }

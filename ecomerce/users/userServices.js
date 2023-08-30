@@ -25,3 +25,21 @@ export const getUserByUsername = async(username) => {
     const findUser = await User.findOne({username})
     return findUser
 }
+
+export const getUserByIdService = async(id) => {
+    const user = await User.findById(id)
+    return user
+}
+
+export const getAllUsersService = async() => {
+    const users = await User.find()
+    return users
+}
+
+export const updateUserService = async(body) => {
+    const user = await User.findOneAndUpdate(body)
+}
+
+export const deleteUserService = async(id) => {
+    const user = await User.findByIdAndDelete(id)
+}

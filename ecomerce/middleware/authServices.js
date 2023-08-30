@@ -2,6 +2,7 @@ import { User } from "../users/userModel.js";
 import jwt from "jsonwebtoken";
 import bcryptjs from 'bcryptjs'
 import dotenv from 'dotenv'
+import APIError from "./apiError.js";
 dotenv.config()
 
 const JWT_SECRET = process.env.JWT_SECRET
@@ -33,3 +34,27 @@ export const isLoggedInService = async(accessToken) => {
    }
 
 } 
+
+export const isAdminService = async(role) => {
+    if (role !== 'admin') {
+        return false
+    } else {
+        return true
+    }
+}
+
+export const isSellerService = async(role) => {
+    if (role !== 'seller') {
+        return false
+    } else {
+        return true
+    }
+}
+
+export const isBuyerService = async(role) => {
+    if (role !== 'buyer') {
+        return false
+    } else {
+        return true
+    }
+}
