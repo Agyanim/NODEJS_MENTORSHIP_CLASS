@@ -1,5 +1,16 @@
-import { loginService, validatePassword, isLoggedInService, isAdminService, isBuyerService, isSellerService } from "./authServices.js"
-import { usernameExist, getUserByUsername, getUserByIdService, getAllUsersService, deleteUserService, updateUserService} from "../users/userServices.js"
+import { 
+    loginService, 
+    validatePassword, 
+    isLoggedInService, 
+    isAdminService, 
+    isBuyerService, 
+    isSellerService, refreshTokenService, verifyToken } from "./authServices.js"
+import { 
+    usernameExist, 
+    getUserByUsername, 
+    getUserByIdService, 
+    getAllUsersService, 
+    deleteUserService, updateUserService} from "../users/userServices.js"
 import APIError from './apiError.js'
 
 export const login = async(req, res, next) => {
@@ -14,9 +25,7 @@ export const login = async(req, res, next) => {
         return next(APIError.unAuthenticated("Invalid login credential!"))
     }
     const accessToken = await loginService(username, password, user.role)
-    res.cookie('access_token', accessToken, {
-        httpOnly: true
-    })
+    res.cookie('access_token', accessToken)
     res.status(200).json({
         success: true,
         message: "User logged in successfully",
@@ -29,6 +38,7 @@ export const isLoggedIn = async(req, res, next) => {
     if (!access_token) {
         return next(APIError.invalidrequest("No acces token!"))
     }
+  
     const loggedInUser = await isLoggedInService(access_token)
     if (!loggedInUser) {
         return next(APIError.unAuthorized("You need to login first!"))
@@ -92,5 +102,23 @@ export const getAllUser = async(req, res, next) => {
         success: true,
         message: "User accounts retrieved successfully",
         users: users
+    })
+}
+
+export const refreshToken = async(req, res, next) => {
+    const username = req.username
+    if (!username) {
+        return next(APIError.unAuthenticated("No valid user"))
+    }
+    const user = await getUserByUsername(username)
+    const validToken = await verifyToken(user.refreshToken)
+    if (!validToken) {
+        return next(APIError.unAuthenticated("invalid token!"))
+    }
+    const accessToken = refreshTokenService(req.username, req.role)
+    req.cookies.access_token = accessToken
+    res.status(200).json({
+        success: true,
+        message: "Token refreshed successfully"
     })
 }

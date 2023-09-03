@@ -6,6 +6,7 @@ import APIError from "./apiError.js";
 dotenv.config()
 
 const JWT_SECRET = process.env.JWT_SECRET
+const REFRESH_SECRET = process.env.REFRESH_SECRET
 
 export const validatePassword = async(password, hashedpassword) => {
     const validPassword = bcryptjs.compareSync(password, hashedpassword)
@@ -21,7 +22,28 @@ export const loginService = async(username, password, role) => {
         password,
         role
     }
-    const accessToken = jwt.sign(payload, JWT_SECRET, {expiresIn: '1m'})
+    const accessToken = jwt.sign(payload, JWT_SECRET, {expiresIn: '30m'})
+    const refreshToken = jwt.sign(payload, REFRESH_SECRET, {expiresIn: '1d'})
+    const user = await User.findOne({username})
+    user.refreshToken = refreshToken
+    user.save()
+    return accessToken
+}
+
+export const verifyToken = async(token) => {
+    try {
+    jwt.verify(token, REFRESH_SECRET)
+        return true
+    } catch (error) {
+        return false
+    }
+}
+export const refreshTokenService = (username, role) => {
+    const payload = {
+        username,
+        role
+    }
+    const accessToken = jwt.sign(payload, JWT_SECRET, {expiresIn: '30m'})
     return accessToken
 }
 

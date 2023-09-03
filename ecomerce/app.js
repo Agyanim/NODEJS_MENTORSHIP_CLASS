@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
 import {connectDB} from './config/db.js'
 import {userRouter} from './users/userRoute.js'
-import { errorHandler } from './middleware/errorHandler.js'
+import { errorHandler, notFound } from './middleware/errorHandler.js'
 import { authRoute } from './middleware/authRoute.js'
 import { productRoute } from './products/productRoute.js'
 
@@ -26,7 +26,8 @@ app.get('/', (req, res)=>{
 
 app.use('/users', userRouter)
 app.use('/auth', authRoute)
-app.use('/product', productRoute)
+app.use('/products', productRoute)
+app.use(notFound)
 app.use(errorHandler)
 
 app.listen(PORT, async()=>{

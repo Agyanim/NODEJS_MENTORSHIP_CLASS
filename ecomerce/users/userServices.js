@@ -38,8 +38,10 @@ export const getAllUsersService = async() => {
 
 export const updateUserService = async(body) => {
     const user = await User.findOneAndUpdate(body)
+    return user
 }
 
 export const deleteUserService = async(id) => {
     const user = await User.findByIdAndDelete(id)
+    return user
 }
